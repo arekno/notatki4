@@ -1,0 +1,77 @@
+
+Zadanie 1
+Wczytaj do DataFrame arkusz z narodzinami dzieci w Polsce dostêpny w pliku /datasets/imiona.xlsx
+Zadanie 2
+Z danych z zadania 1 wyœwietl (korzystaj¹c w miarê mo¿liwoœci z funkcji biblioteki Pandas):
+• tylko te rekordy gdzie liczba nadanych imion by³a wiêksza ni¿ 1000 w danym roku
+• tylko rekordy gdzie nadane imiê jest takie jak Twoje
+• sumê wszystkich urodzonych dzieci w ca³ym danym okresie,
+• sumê dzieci urodzonych w latach 2000-2005
+• sumê urodzonych ch³opców i dziewczynek,
+• najbardziej popularne imiê dziewczynki i ch³opca w danym roku ( czyli po 2 rekordy na rok),
+• najbardziej popularne imiê dziewczynki i ch³opca w ca³ym danym okresie,
+
+#zad1,2
+# plik = pd.ExcelFile('imiona.xlsx')
+# df = pd.read_excel(plik, header=0)
+#
+# print(df[df.Liczba > 1000])
+# print('')
+# print(df[df.Imie == 'RADOS£AW'])
+# print('')
+# print(df.Liczba.sum())
+# print('')
+# grupa = df[df.Rok < 2006]
+# print(grupa.Liczba.sum())
+# grupa = df[df.Rok < 2006].groupby('Rok').agg({'Liczba': ['sum']})
+# print(grupa)
+# print('')
+#
+# print(df.sort_values('Liczba', ascending=False).groupby(['Rok', 'Plec']).nth(0))
+# print(df.sort_values('Liczba', ascending=False).groupby(['Rok', 'Plec']).first())
+#
+# new_df = df.sort_values('Liczba', ascending=False).groupby(['Rok', 'Plec'])
+# for index, group in enumerate(new_df, start=1):
+#     print(f"{index} {group[0]}")
+#     print(f" {group[1].iloc[0]['Imie']}", end='')
+#     print(f" {group[1].iloc[0]['Liczba']}")
+# print('')
+# print("Ch³opiec")
+# print(df[df['Plec'] == 'M'].groupby(['Imie']).agg({'Liczba': ['sum']}).sort_values(('Liczba', 'sum'),
+#                                                                                    ascending=False).iloc[0])
+# print("Dziewczynka")
+# print(df[df['Plec'] == 'K'].groupby(['Imie']).agg({'Liczba': ['sum']}).sort_values(('Liczba', 'sum'),
+#                                                                                    ascending=False).iloc[0])
+
+
+Zadanie 3
+Wczytaj plik /datasets/zamowieniana.csv a nastêpnie wyœwietl:
+• listê unikalnych nazwisk sprzedawców (przetwarzaj¹c zwrócon¹ pojedyncz¹ kolumnê z
+DataFrame)
+• 5 najwy¿szych wartoœci zamówieñ
+• iloœæ zamówieñ z³o¿onych przez ka¿dego sprzedawcê
+• sumê zamówieñ dla ka¿dego kraju
+• sumê zamówieñ dla roku 2005, dla sprzedawców z Polski
+• œredni¹ kwotê zamówienia w 2004 roku,
+• zapisz dane za 2004 rok do pliku zamówienia_2004.csv a dane za 2005 do pliku
+zamówienia_2005.csv
+
+#zad3
+
+df = pd.read_csv('zamowienia.csv', header=0, sep=';', decimal='.')
+
+print(df['Sprzedawca'].unique())
+print('')
+print(df.sort_values('Utarg', ascending=False).head(5))
+print('')
+print(df.groupby('Sprzedawca').size())
+print('')
+print(df.groupby('Kraj').agg({'Utarg': ['sum']}))
+print(df.groupby('Kraj').size())
+print('')
+print(df[(df['Kraj'] == 'Polska') & (df['Data zamowienia'] >= '2005-01-01') & (df['Data zamowienia'] <= '2005-12-31')].
+      agg({'Utarg': ['sum']}))
+print('')
+print(df[df['Data zamowienia'].str[:4] == '2004'].agg({'Utarg': ['mean']}))
+rok_2004 = df[((df[ 'Data zamowienia'] >= '2004-01-01') & (df['Data zamowienia'] <= '2004-12-31'))]
+rok_2004.to_csv("zamowienia_2004.csv", index=False)
